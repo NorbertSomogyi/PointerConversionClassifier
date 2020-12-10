@@ -2,12 +2,11 @@ import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
-import org.deeplearning4j.nn.conf.layers.LSTM;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
-import org.deeplearning4j.nn.conf.layers.recurrent.LastTimeStep;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
@@ -16,7 +15,6 @@ import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
-import org.nd4j.linalg.dataset.api.preprocessor.LabelLastTimeStepPreProcessor;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 
@@ -24,7 +22,7 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 public class PointerClassifier {
-    public static boolean visualize = true;
+    public static boolean visualize = false;
     public static String dataLocalPath;
 
     public static void main(String[] args) throws Exception {
@@ -51,6 +49,7 @@ public class PointerClassifier {
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .weightInit(WeightInit.XAVIER)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .updater(new Nesterovs(learningRate, 0.9))
                 .list()
                 .layer(new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
@@ -84,7 +83,7 @@ public class PointerClassifier {
 
         System.out.println("\n****************Example finished********************");
         //Training is complete. Code that follows is for plotting the data & predictions only
-        //generateVisuals(model, trainIter, testIter);
+        generateVisuals(model, trainIter, testIter);
     }
 
     public static void generateVisuals(MultiLayerNetwork model, DataSetIterator trainIter, DataSetIterator testIter) throws Exception {
