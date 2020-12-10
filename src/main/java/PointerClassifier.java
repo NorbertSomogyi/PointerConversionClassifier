@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 public class PointerClassifier {
     public static boolean visualize = false;
-    public static String dataLocalPath;
 
     public static void main(String[] args) throws Exception {
         int seed = 123;
@@ -35,7 +34,6 @@ public class PointerClassifier {
         int numOutputs = 1;
         int numHiddenNodes = 4;
 
-        dataLocalPath = DownloaderUtility.CLASSIFICATIONDATA.Download();
         //Load the training data:
         RecordReader rr = new CSVRecordReader();
         rr.initialize(new FileSplit(new File("training_set.csv")));
@@ -83,7 +81,7 @@ public class PointerClassifier {
 
         System.out.println("\n****************Example finished********************");
         //Training is complete. Code that follows is for plotting the data & predictions only
-        generateVisuals(model, trainIter, testIter);
+        // generateVisuals(model, trainIter, testIter);
     }
 
     public static void generateVisuals(MultiLayerNetwork model, DataSetIterator trainIter, DataSetIterator testIter) throws Exception {
